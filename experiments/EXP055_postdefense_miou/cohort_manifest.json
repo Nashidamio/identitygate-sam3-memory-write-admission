@@ -1,0 +1,23 @@
+{
+  "boundary": {
+    "gate_inference_performed": false,
+    "model_outcomes_used": false,
+    "sam_inference_performed": false,
+    "selection_is_outcome_independent": true
+  },
+  "config_sha256": "b9af3963f5a04c4ff14441f5d398688fc838c2b8f031e7c83e34fea6f34b7207",
+  "excluded_union_videos": 160,
+  "experiment": "EXP055",
+  "identitygate_commit_at_execution": "0975a1db89c44fd5ca5e73559930d3abcde1b076",
+  "membership_sha256": "0d65a91d8bdfedfbd01480ab1eb75e232cbb36b6bd143819b936d0b47674896b",
+  "output_hashes": {
+    "cohort.csv": "967f6c9d1939b25c25cfdd6ec2398d7c052a3a4f092a94cfd6be7a3babcac42e"
+  },
+  "population_videos": 1170,
+  "rng_seed": 55,
+  "sampling_method": "uniform without replacement from sorted untouched video IDs",
+  "script_sha256": "1f5ceddbf8af61f12ee326aec2375d15bac5ef3495db9eb5362f4c93acd09b4c",
+  "selected_videos": 80,
+  "status": "POSTDEFENSE_MIOU_COHORT_FROZEN",
+  "untouched_candidate_videos": 1010
+}

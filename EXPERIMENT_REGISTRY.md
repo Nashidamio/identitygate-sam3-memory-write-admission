@@ -1552,3 +1552,85 @@ STATUS:
   fd09091fb4e75b6f0d138658a0584e3af4376487dd01b25b15594b56ee300c5a
 - contact_sheet.png SHA256:
   fed9ab8cd13f609d92c0a6d74a9a393ed504def1ee9f06be2d1abb8c43b28e8d
+
+
+## EXP055 - Post-defense full-video IoU supplementary evaluation
+
+- Status: COHORT FROZEN / MIOU INFERENCE NOT YET RUN.
+- Purpose:
+  supplementary post-defense evaluation of ordinary full-video segmentation
+  quality for vanilla frozen SAM 3 B0 versus frozen B2.
+- Scientific status:
+  supplementary / post-defense; not preregistered confirmatory TEST evidence
+  and does not alter EXP053/EXP054 conclusions.
+- Protocol amendment:
+  docs/AMENDMENT_A12_POSTDEFENSE_FULLVIDEO_MIOU.md
+  frozen at commit 51edfc1.
+- Cohort-selection implementation frozen at commit:
+  0975a1db89c44fd5ca5e73559930d3abcde1b076.
+- Source primary-eligible population: 1,170 videos.
+- Previously used disjoint exclusions:
+  Fresh DEV 40, HARD_TEST80 80, REPRESENTATIVE_TEST40 40.
+- Excluded union: 160 videos.
+- Untouched eligible candidates: 1,010 videos.
+- Sampling:
+  uniform without replacement from sorted untouched video IDs;
+  NumPy default_rng seed 55.
+- Frozen supplementary cohort: 80 videos.
+- POSTDEFENSE_MIOU80 membership SHA256:
+  0d65a91d8bdfedfbd01480ab1eb75e232cbb36b6bd143819b936d0b47674896b
+- No SAM inference, gate inference, model-outcome inspection, retraining,
+  threshold search, or retuning occurred during cohort selection.
+- cohort.csv SHA256:
+  967f6c9d1939b25c25cfdd6ec2398d7c052a3a4f092a94cfd6be7a3babcac42e
+- cohort_manifest.json SHA256:
+  31f0a4867aa8cc655419fbe1d4cdf06160a62adb651e103944bdfb182456b203
+- Config SHA256:
+  b9af3963f5a04c4ff14441f5d398688fc838c2b8f031e7c83e34fea6f34b7207
+- Cohort-builder script SHA256:
+  1f5ceddbf8af61f12ee326aec2375d15bac5ef3495db9eb5362f4c93acd09b4c
+
+Next:
+- Freeze the B0/B2 full-video IoU inference implementation before any SAM
+  propagation on POSTDEFENSE_MIOU80.
+
+
+## EXP055 - Post-defense full-video IoU supplementary evaluation
+
+- Status: COHORT FROZEN / MIOU INFERENCE NOT YET RUN.
+- Purpose:
+  supplementary post-defense evaluation of ordinary full-video segmentation
+  quality for vanilla frozen SAM 3 B0 versus frozen B2.
+- Scientific status:
+  supplementary / post-defense; not preregistered confirmatory TEST evidence
+  and does not alter EXP053/EXP054 conclusions.
+- Protocol amendment:
+  docs/AMENDMENT_A12_POSTDEFENSE_FULLVIDEO_MIOU.md
+  frozen at commit 51edfc1.
+- Cohort-selection implementation frozen at commit:
+  0975a1db89c44fd5ca5e73559930d3abcde1b076.
+- Source primary-eligible population: 1,170 videos.
+- Previously used disjoint exclusions:
+  Fresh DEV 40, HARD_TEST80 80, REPRESENTATIVE_TEST40 40.
+- Excluded union: 160 videos.
+- Untouched eligible candidates: 1,010 videos.
+- Sampling:
+  uniform without replacement from sorted untouched video IDs;
+  NumPy default_rng seed 55.
+- Frozen supplementary cohort: 80 videos.
+- POSTDEFENSE_MIOU80 membership SHA256:
+  0d65a91d8bdfedfbd01480ab1eb75e232cbb36b6bd143819b936d0b47674896b
+- No SAM inference, gate inference, model-outcome inspection, retraining,
+  threshold search, or retuning occurred during cohort selection.
+- cohort.csv SHA256:
+  967f6c9d1939b25c25cfdd6ec2398d7c052a3a4f092a94cfd6be7a3babcac42e
+- cohort_manifest.json SHA256:
+  31f0a4867aa8cc655419fbe1d4cdf06160a62adb651e103944bdfb182456b203
+- Config SHA256:
+  b9af3963f5a04c4ff14441f5d398688fc838c2b8f031e7c83e34fea6f34b7207
+- Cohort-builder script SHA256:
+  1f5ceddbf8af61f12ee326aec2375d15bac5ef3495db9eb5362f4c93acd09b4c
+
+Next:
+- Freeze the B0/B2 full-video IoU inference implementation before any SAM
+  propagation on POSTDEFENSE_MIOU80.

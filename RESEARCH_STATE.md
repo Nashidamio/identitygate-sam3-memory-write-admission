@@ -2292,3 +2292,89 @@ DEMO001 SUPPLEMENTARY REAL-WORLD QUALITATIVE DEMONSTRATION:
   performance or statistical inference is claimed.
 - DEMO001 is supplementary and does not reopen, modify, or reinterpret
   the frozen EXP053/EXP054 TEST campaign.
+
+
+## EXP055 - Post-defense full-video IoU supplementary evaluation
+
+STATUS:
+- COHORT FROZEN / MIOU INFERENCE NOT YET RUN.
+- Amendment A12 frozen at commit 51edfc1.
+- Cohort-selection code/config frozen at commit:
+  0975a1db89c44fd5ca5e73559930d3abcde1b076.
+
+COHORT:
+- EXP044/EXP048 primary-eligible population: 1,170 videos.
+- Fresh DEV, HARD_TEST80, and REPRESENTATIVE_TEST40 exclusions are mutually
+  disjoint: 40 + 80 + 40 = 160 videos.
+- Untouched eligible candidate population: 1,010 videos.
+- Sampling: uniform without replacement from sorted untouched IDs.
+- RNG seed: 55.
+- Selected videos: 80.
+- Membership SHA256:
+  0d65a91d8bdfedfbd01480ab1eb75e232cbb36b6bd143819b936d0b47674896b
+
+BOUNDARY:
+- model_outcomes_used = false.
+- sam_inference_performed = false.
+- gate_inference_performed = false.
+- selection_is_outcome_independent = true.
+- EXP055 is supplementary post-defense evidence only.
+- EXP053/EXP054 frozen TEST conclusions remain unchanged.
+
+INTEGRITY:
+- cohort.csv SHA256:
+  967f6c9d1939b25c25cfdd6ec2398d7c052a3a4f092a94cfd6be7a3babcac42e
+- cohort_manifest.json SHA256:
+  31f0a4867aa8cc655419fbe1d4cdf06160a62adb651e103944bdfb182456b203
+- config SHA256:
+  b9af3963f5a04c4ff14441f5d398688fc838c2b8f031e7c83e34fea6f34b7207
+- cohort-builder script SHA256:
+  1f5ceddbf8af61f12ee326aec2375d15bac5ef3495db9eb5362f4c93acd09b4c
+
+NEXT:
+- Inspect the frozen final tracker interfaces needed to compute full-video
+  GT-visible, non-conditioning object-frame IoU for B0 and frozen B2.
+- Freeze inference script/config before running SAM.
+
+
+## EXP055 - Post-defense full-video IoU supplementary evaluation
+
+STATUS:
+- COHORT FROZEN / MIOU INFERENCE NOT YET RUN.
+- Amendment A12 frozen at commit 51edfc1.
+- Cohort-selection code/config frozen at commit:
+  0975a1db89c44fd5ca5e73559930d3abcde1b076.
+
+COHORT:
+- EXP044/EXP048 primary-eligible population: 1,170 videos.
+- Fresh DEV, HARD_TEST80, and REPRESENTATIVE_TEST40 exclusions are mutually
+  disjoint: 40 + 80 + 40 = 160 videos.
+- Untouched eligible candidate population: 1,010 videos.
+- Sampling: uniform without replacement from sorted untouched IDs.
+- RNG seed: 55.
+- Selected videos: 80.
+- Membership SHA256:
+  0d65a91d8bdfedfbd01480ab1eb75e232cbb36b6bd143819b936d0b47674896b
+
+BOUNDARY:
+- model_outcomes_used = false.
+- sam_inference_performed = false.
+- gate_inference_performed = false.
+- selection_is_outcome_independent = true.
+- EXP055 is supplementary post-defense evidence only.
+- EXP053/EXP054 frozen TEST conclusions remain unchanged.
+
+INTEGRITY:
+- cohort.csv SHA256:
+  967f6c9d1939b25c25cfdd6ec2398d7c052a3a4f092a94cfd6be7a3babcac42e
+- cohort_manifest.json SHA256:
+  31f0a4867aa8cc655419fbe1d4cdf06160a62adb651e103944bdfb182456b203
+- config SHA256:
+  b9af3963f5a04c4ff14441f5d398688fc838c2b8f031e7c83e34fea6f34b7207
+- cohort-builder script SHA256:
+  1f5ceddbf8af61f12ee326aec2375d15bac5ef3495db9eb5362f4c93acd09b4c
+
+NEXT:
+- Inspect the frozen final tracker interfaces needed to compute full-video
+  GT-visible, non-conditioning object-frame IoU for B0 and frozen B2.
+- Freeze inference script/config before running SAM.
