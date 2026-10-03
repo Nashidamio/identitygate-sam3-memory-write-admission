@@ -1,0 +1,38 @@
+{
+  "boundary": {
+    "gate_inference_performed": false,
+    "model_outcomes_used": false,
+    "sam_inference_performed": false,
+    "selection_is_outcome_independent": true
+  },
+  "experiment": "EXP055",
+  "frozen_amendment": {
+    "commit": "51edfc1",
+    "path": "docs/AMENDMENT_A12_POSTDEFENSE_FULLVIDEO_MIOU.md"
+  },
+  "input": {
+    "population": {
+      "expected_videos": 1170,
+      "path": "experiments/EXP048_di_v1/di_video_components.csv",
+      "sha256": "42717e0c25b798c60e1be71cfcaafa49904559e104d6f23b09bff95c10275df3"
+    },
+    "exclude": {
+      "fresh_dev": "experiments/EXP049_final_split/fresh_dev.csv",
+      "hard_test": "experiments/EXP049_final_split/hard_test.csv",
+      "representative_test": "experiments/EXP049_final_split/representative_test.csv"
+    }
+  },
+  "outputs": {
+    "cohort": "experiments/EXP055_postdefense_miou/cohort.csv",
+    "manifest": "experiments/EXP055_postdefense_miou/cohort_manifest.json"
+  },
+  "sampling": {
+    "expected_excluded_union_videos": 160,
+    "expected_untouched_videos": 1010,
+    "method": "uniform without replacement from sorted untouched video IDs",
+    "rng_seed": 55,
+    "videos": 80
+  },
+  "purpose": "Freeze an outcome-independent untouched MOSEv2 cohort for the supplementary post-defense B0 versus frozen B2 full-video IoU evaluation.",
+  "status": "PLANNED_PRE_FREEZE"
+}
