@@ -1,0 +1,96 @@
+{
+  "experiment": "EXP055",
+  "purpose": "Supplementary post-defense full-video IoU comparison of vanilla frozen SAM 3 B0 versus frozen B2 on the frozen POSTDEFENSE_MIOU80 cohort.",
+  "scientific_status": "SUPPLEMENTARY_POSTDEFENSE_NONCONFIRMATORY",
+  "protocol": {
+    "amendment_path": "docs/AMENDMENT_A12_POSTDEFENSE_FULLVIDEO_MIOU.md",
+    "amendment_commit": "51edfc1",
+    "cohort_artifact_commit": "b37f489c37feb81c1f2a75c1e78480cf2ced626c"
+  },
+  "scope": {
+    "dataset_root": "/mnt/d/thesis_data/mosev2/train",
+    "cohort_csv": "experiments/EXP055_postdefense_miou/cohort.csv",
+    "cohort_csv_sha256": "967f6c9d1939b25c25cfdd6ec2398d7c052a3a4f092a94cfd6be7a3babcac42e",
+    "cohort_manifest": "experiments/EXP055_postdefense_miou/cohort_manifest.json",
+    "cohort_manifest_sha256": "31f0a4867aa8cc655419fbe1d4cdf06160a62adb651e103944bdfb182456b203",
+    "membership_sha256": "0d65a91d8bdfedfbd01480ab1eb75e232cbb36b6bd143819b936d0b47674896b",
+    "expected_videos": 80,
+    "sanity_video": "0442a954"
+  },
+  "methods": {
+    "B0": {
+      "tracker_variant": "B0",
+      "tau": null
+    },
+    "B2": {
+      "tracker_variant": "B2",
+      "tau": 0.1,
+      "model_path": "experiments/EXP029_b2core_train/model.json",
+      "model_sha256": "6160a6be9da2058808c16182abe03443014806273df46fe59a86411ffc869ecf"
+    }
+  },
+  "metric": {
+    "name": "full_video_jaccard_iou",
+    "conditioning_frame": 0,
+    "exclude_conditioning_frame": true,
+    "evaluable_object_frame": "frame_idx > 0 and visibility[object_id][frame_idx] is true",
+    "absent_gt_object_frames_in_iou_denominator": false,
+    "primary_point_estimator": "pooled mean IoU across all evaluable GT-visible object-frames",
+    "secondary_point_estimator": "video-balanced mean of per-video mean IoU",
+    "primary_contrast": "B2_minus_B0"
+  },
+  "inference": {
+    "bootstrap_replicates": 50000,
+    "seed": 52,
+    "confidence": 0.95,
+    "cluster_unit": "video",
+    "pairing": "same sampled video indices for B0 and B2",
+    "method": "paired nonparametric video-cluster bootstrap with BCa confidence interval",
+    "bca_bias_correction": "midrank proportion with finite-sample clipping",
+    "bca_acceleration": "delete-one-video jackknife",
+    "primary_bootstrap_statistic": "pooled object-frame mean IoU difference B2 minus B0",
+    "secondary_bootstrap_statistic": "video-balanced mean IoU difference B2 minus B0"
+  },
+  "runtime": {
+    "sanity_videos": 1,
+    "full_run_videos": 80,
+    "scratch_dir": "/mnt/d/thesis_data/identitygate_scratch/EXP055_postdefense_miou",
+    "require_clean_committed_tree": true,
+    "refuse_existing_inference_outputs": true
+  },
+  "boundary": {
+    "retraining_allowed": false,
+    "threshold_search_allowed": false,
+    "threshold_retuning_allowed": false,
+    "architecture_change_allowed": false,
+    "exp053_exp054_conclusions_modified": false
+  },
+  "source_dependencies": {
+    "exp053_script": {
+      "path": "scripts/exp053_final_test.py",
+      "sha256": "875f90da8eae90c1642231dd2b7cb2256690ca90cca370abd426b1ddba1bb84b"
+    },
+    "exp053_config": {
+      "path": "configs/EXP053-final-test-v1.json",
+      "sha256": "4fdf582bb3427f9e78e09d41821f9a0947941760598f2eb92b6689e20ee8f445"
+    },
+    "exp051_script": {
+      "path": "scripts/exp051_fresh_dev_headline_outcomes.py",
+      "sha256": "18efa567b925ef8fbb3176b29c447f04464a9ac1133a197c426328a5fe4e59c6"
+    },
+    "exp050_script": {
+      "path": "scripts/exp050_fresh_dev_rate_selection.py",
+      "sha256": "c3361f84c3f25f3dc5d5076f4935f0e2e56a7d626bcde74c23a66f35c2bd3e2d"
+    },
+    "exp054_bca_script": {
+      "path": "scripts/exp054_final_test_bca_inference.py",
+      "sha256": "256c8c401d295e4e727faed41cac934ea776a6c1f7e7cde8f3cf42b1339026ec"
+    }
+  },
+  "outputs": {
+    "per_video_csv": "experiments/EXP055_postdefense_miou/per_video_miou.csv",
+    "summary_json": "experiments/EXP055_postdefense_miou/miou_summary.json",
+    "bootstrap_draws_csv": "experiments/EXP055_postdefense_miou/miou_bootstrap_draws.csv"
+  },
+  "status": "PLANNED_PRE_INFERENCE_FREEZE"
+}
