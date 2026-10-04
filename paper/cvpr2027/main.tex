@@ -528,7 +528,20 @@ establish an advantage for the DMS-lite write-side comparator over B2.
 
 \subsection{Supported write-rate sweep}
 
-The frozen TEST sweep contains 19 operating points that were supported by
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figures/write_rate_sweep.pdf}
+\caption{HARD\_TEST80 POR@30 across the 19 write-rate operating points
+supported by the frozen pre-TEST DEV mapping.  The horizontal axis is the
+realized TEST physical write rate.  Open black markers indicate the frozen
+headline \(r_\star=0.30\) operating point for each policy.  Lines connect
+evaluated supported points only and do not denote interpolated operating
+points.}
+\label{fig:write-rate-sweep}
+\end{figure}
+
+Figure~\ref{fig:write-rate-sweep} summarizes the frozen supported sweep.
+The TEST sweep contains 19 operating points that were supported by
 the pre-TEST DEV rate-matching procedure.  POR@30 is not a monotone function
 of realized write rate for B2, B3-S, B3-R, or B5.  For B2, the highest
 observed POR@30 among its supported points is 0.7569 at write rate 0.3233,
