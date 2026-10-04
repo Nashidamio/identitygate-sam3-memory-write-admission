@@ -307,28 +307,144 @@ variants; numerical precision is therefore not another experimental factor.
 
 \subsection{Data and leakage boundaries}
 
-% TODO: development-exposure boundary, Fresh DEV, Hard TEST,
-% Representative TEST, outcome-independent selection, one-touch TEST.
+We evaluate on MOSEv2~\cite{MOSEv2}.  The usable source partition contains
+3,666 training videos; the released validation partition does not provide
+the frame-by-frame masks required by our target-IoU, identity-theft, and
+reappearance-event evaluation.  Final development and test cohorts are
+therefore constructed from the training partition under video-level leakage
+control, excluding videos already exposed during model or protocol
+development.
+
+Fresh DEV contains 40 videos and 233 frozen primary reappearance events.
+It is used for write-rate matching before final TEST execution.  The primary
+hard-stratum cohort, HARD\_TEST80, contains 80 videos and 506 frozen primary
+events.  REPRESENTATIVE\_TEST40 contains 40 videos and 76 frozen primary
+events and serves as a development-untouched external-validity anchor.
+Cohort memberships are frozen before final TEST prediction generation.
 
 \subsection{Endpoints}
 
-% TODO: define POR@30 and ITR@30 exactly from the frozen endpoint record.
+A qualifying reappearance event follows a target-visibility gap of at least
+five frames, where GT visibility requires a non-empty target mask.  Recovery
+for POR@30 occurs when target IoU exceeds 0.5 within the first 30 evaluable
+GT-visible frames after reappearance, subject to the frozen overlapping-event
+truncation rule.  POR@30 is the proportion of qualifying events that recover
+and is the sole primary endpoint.
+
+The single primary research-question contrast is
+\[
+    \mathrm{POR@30}(\mathrm{B3\mbox{-}S})
+    -
+    \mathrm{POR@30}(\mathrm{B2})
+\]
+at the frozen headline operating rate \(r_\star=0.30\).  B3-R versus B3-S,
+B3-R versus B2, B2 versus B1, B5 comparisons, and gated-method comparisons
+with B0 are pre-specified secondary contrasts.  Because B0 remains at its
+native write rate, B0 comparisons are practical-reference comparisons rather
+than same-budget selector comparisons.
+
+Identity-Theft Rate at 30 frames (ITR@30) is secondary.  A theft frame
+satisfies both
+\[
+    \mathrm{target\ IoU}<0.3
+    \quad\text{and}\quad
+    \mathrm{max\ other\ IoU}>0.5.
+\]
+A theft episode requires at least five consecutive chronological video frames
+satisfying this definition.  Within the POR@30-aligned event interval, a
+qualifying reappearance event receives a theft indicator of one if at least
+one such episode occurs and zero otherwise.  ITR@30 is the proportion of all
+evaluated qualifying reappearance events with indicator one, including
+events with no observed competitor overlap.
 
 \subsection{Write-rate matching}
 
-% TODO: explain frozen tolerance and why unmatched comparisons are
-% descriptive rather than controlled causal contrasts.
+For video \(v\), let \(N_v\) be the number of eligible non-conditioning
+frame-write opportunities and \(K_v\) the number physically admitted.
+Conditioning and prompt frames are excluded, and one eligible frame counts as
+one opportunity regardless of object count.  The physical frame-write rate
+is \(K_v/N_v\), while threshold selection uses the pooled DEV rate
+\[
+    r_{\mathrm{pool}}
+    =
+    \frac{\sum_v K_v}{\sum_v N_v}.
+\]
 
-\subsection{Statistical inference}
+The common headline operating rate is selected on Fresh DEV using write rate
+only; POR, ITR, and other tracking outcomes are not available to this
+selection.  The frozen result is \(r_\star=0.30\), with headline thresholds
+0.10 for B1, 0.10 for B2, 0.20 for B3-S, 0.20 for B3-R, and 0.70 for B5.
+A method is considered matched to the target when its absolute DEV pooled
+write-rate error is at most 0.02.
 
-% TODO: video as statistical cluster; paired video-clustered BCa bootstrap;
-% confidence level; effect-size reporting.
+All thresholds and supported curve mappings are frozen before TEST and are
+never searched, interpolated, extrapolated, refined, or retuned on TEST.
+For a direct gated TEST comparison, if the absolute pooled write-rate
+difference exceeds 0.02, we label that contrast \textsc{Rate-Mismatch} and
+do not describe it as a matched-rate result.  B0 is reported separately at
+its native physical write rate.
 
 \subsection{Exact-budget neutral selectors}
 
-% TODO: explain budget-preserving neutral timing control without overstating
-% what the neutral comparison proves.
+Each gated method at the headline operating point is paired with an
+outcome-independent timing control that has exactly the same physical write
+budget in every video.  For a method with \(K_{m,v}\) admitted opportunities
+among \(N_v\) eligible opportunities, the neutral control admits exactly
+\(K_{m,v}\) opportunities.  When \(0<K_{m,v}<N_v\), chronologically index
+eligible opportunities by \(0,\ldots,N_v-1\) and select
+\[
+    q_j =
+    \left\lfloor
+    \frac{(j+0.5)N_v}{K_{m,v}}
+    \right\rfloor,
+    \qquad
+    j=0,\ldots,K_{m,v}-1.
+\]
+For \(K_{m,v}=0\) it selects none, and for \(K_{m,v}=N_v\) it selects all.
+Thus
+\[
+    K_{\mathrm{neutral},v}=K_{\mathrm{method},v}
+\]
+with zero-frame per-video budget mismatch.
 
+The selector uses no GT, gate score, prediction quality, POR, ITR, future
+outcome, or object identity.  It is an evaluation control rather than a
+deployable online gate.  Signal-versus-neutral comparisons therefore test
+whether the signal-informed timing is preferable to an outcome-independent
+schedule at the same realized write budget; they are diagnostics and do not
+replace the pre-specified primary contrast.
+
+\subsection{Statistical inference}
+
+The video is the statistical cluster.  Primary uncertainty is quantified by
+a paired video-clustered BCa 95\% confidence interval for the pooled
+event-level POR@30 difference.  We use 50,000 bootstrap replicates with
+deterministic seed 52.  Each replicate samples videos with replacement,
+retains all event rows belonging to each sampled video, and uses the same
+sampled video indices across compared methods.
+
+BCa bias correction uses the midrank bootstrap position with finite-sample
+clipping, and acceleration is computed by delete-one-video jackknife.  The
+same clustered procedure is used for pre-specified secondary and
+signal-versus-neutral contrasts.  The minimum practically important
+hard-stratum POR@30 benefit is frozen at \(+0.08\).
+
+\subsection{Frozen TEST procedure}
+
+Final TEST execution follows a one-touch campaign.  Before the first TEST
+trajectory can access TEST video frames or annotations, a persistent campaign
+marker binds the run to the frozen repository commit, configuration hash, and
+cohort memberships.  If an engineering interruption occurs after that marker
+exists, only a resume under the identical frozen commit and configuration may
+continue unfinished trajectories.  Partial TEST outcomes cannot change any
+model, feature, threshold, operating rate, cohort, endpoint, or inference
+choice.
+
+HARD\_TEST80 executes the frozen supported write-rate curve points together
+with the corresponding exact-budget neutral controls.  REPRESENTATIVE\_TEST40
+executes the final headline variants and their headline neutral controls
+only, consistent with its role as an external-validity anchor.  Negative,
+null, harmful, positive, and inconclusive outcomes are all retained.
 \section{Results}
 \label{sec:results}
 
