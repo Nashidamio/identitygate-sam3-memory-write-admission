@@ -100,15 +100,51 @@ Our contributions are:
 \section{Related Work}
 \label{sec:related}
 
-% TODO: Populate only from verified literature.
-% Required groups:
-% 1. memory-based video object segmentation;
-% 2. SAM-family video memory and propagation;
-% 3. memory selection / quality-aware memory updates;
-% 4. identity / re-identification signals in VOS;
-% 5. evaluation under controlled budgets where relevant.
-%
-% Do not introduce a "first" claim without explicit verified evidence.
+\paragraph{Selective memory and reliability.}
+Prior VOS work already treats memory management as an explicit design
+problem rather than an automatic consequence of propagation.
+QDMN learns quality-aware dynamic memory admission in pre-foundation-model
+VOS~\cite{QDMN}, while SAMURAI uses motion-aware memory selection in
+SAM-family tracking~\cite{SAMURAI}.
+DAM4SAM makes distractor-aware memory structure explicit~\cite{DAM4SAM},
+and SENTRY validates candidate memory using training-free temporal and
+trajectory reasoning~\cite{SENTRY}.
+More recent SAM-generation studies further emphasize memory policy:
+SAM3-DMS performs per-object reliability-based memory selection in a SAM 3
+setting~\cite{SAM3-DMS}, and Rethinking Memory Design studies memory-policy
+and memory-architecture choices across SAM-based trackers~\cite{RethinkingMemory}.
+OAMVOS provides additional reliability- and occlusion-aware context for
+selective memory updates~\cite{OAMVOS}.
+These works make a broad \emph{memory filtering is new} claim untenable.
+Our question is narrower: with the underlying SAM 3 tracker fixed, which
+information is supported for the write-admission decision?
+
+\paragraph{Identity-aware propagation and competitor reasoning.}
+Identity information is well established as useful for associating objects
+through time.
+AOT, DeAOT, and AOST develop object-specific identity representations and
+identity-aware propagation mechanisms for VOS~\cite{AOT,DeAOT,AOST}.
+Recent systems also combine long-term memory, semantic identity, or
+competitor-aware reasoning with modern segmentation models, including
+ReMeDI-SAM3, SurgSLOT, CMR, and VOS-Agent
+~\cite{ReMeDI-SAM3,SurgSLOT,CMR,VOS-Agent}.
+CMR is especially relevant as a competitor-relative memory-readout neighbor,
+but it does not implement the same write-admission intervention studied here.
+Thus, prior identity-aware tracking motivates the scientific plausibility of
+identity signals without establishing that native pointer identity adds
+incremental value at write time once quality and temporal evidence are
+already available.
+
+\paragraph{Positioning of this study.}
+The literature therefore supports all three candidate signal families:
+quality, temporal consistency, and identity.
+We do not compare unrelated end-to-end systems.
+Instead, we hold the SAM 3 VOS/PVS substrate fixed and evaluate a nested
+write-side ladder under a common leakage-controlled protocol, explicit
+write-rate matching, exact-budget neutral controls, and video-clustered
+inference.
+This isolates the information available to memory admission rather than
+claiming novelty for memory filtering itself.
 
 \section{Controlled Memory-Write Admission}
 \label{sec:method}
@@ -274,6 +310,6 @@ The exact-budget controls further show why memory-write policies require
 budget-aware evaluation before gains can be attributed to their signals.
 
 \bibliographystyle{plain}
-% \bibliography{references}
+\bibliography{references}
 
 \end{document}
