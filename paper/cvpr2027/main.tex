@@ -157,6 +157,24 @@ claiming novelty for memory filtering itself.
 \section{Controlled Memory-Write Admission}
 \label{sec:method}
 
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/method_overview.pdf}
+\caption{Overview of the controlled memory-write intervention and
+signal-family ladder.  Frozen SAM 3 produces the frame-\(t\) prediction
+before admission is applied.  \textsc{Admit} retains the candidate
+non-conditioning write, whereas \textsc{Block} post-yield evicts it, so the
+already-produced prediction is preserved while future memory changes.
+B0 is the native ungated reference; B1--B3-R vary the information available
+to admission; and B5 is the DMS-lite comparator.  Missing identity follows
+the frozen B3-R\(\rightarrow\)B3-S\(\rightarrow\)B2 fallback, with
+\texttt{pointer\_valid} used only as an availability mask.}
+\label{fig:method-overview}
+\end{figure*}
+
+Figure~\ref{fig:method-overview} summarizes the intervention and the
+signal-family ladder used throughout the experiments.
+
 \subsection{Frozen SAM 3 substrate}
 
 All experiments use the frozen SAM 3 VOS/PVS substrate~\cite{SAM3},
