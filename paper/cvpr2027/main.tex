@@ -151,13 +151,54 @@ claiming novelty for memory filtering itself.
 
 \subsection{Frozen SAM 3 substrate}
 
-% TODO: describe build_sam3_video_model(), frozen weights, VOS/PVS memory
-% path, and the intervention point using only repository-verified details.
+All experiments use the frozen SAM 3 VOS/PVS substrate~\cite{SAM3},
+instantiated with \texttt{build\_sam3\_video\_model()} and the upstream
+\texttt{facebook/sam3/sam3.pt} checkpoint.  The SAM 3 source is pinned to
+commit
+\texttt{8f0b7f4d4e7eda2ed606ebde6702c93359ad01da}.
+SAM 3 weights and architecture remain fixed: we perform no SAM fine-tuning,
+LoRA adaptation, detector modification, or replacement of the native VOS
+memory machinery.  The experimental intervention is restricted to whether a
+newly produced non-conditioning memory entry is retained for subsequent
+propagation.  This keeps the visual predictor fixed while changing only the
+information admitted to future memory.
 
 \subsection{Closed-loop admission intervention}
 
-% TODO: define candidate write, admit/block action, and verify that blocking
-% changes future memory state while prediction continues.
+For gated variant \(v\), each tracked object \(o\) at non-conditioning frame
+\(t\) produces a deterministic admission score \(s_v(o,t)\) from that
+variant's frozen signal set.  We aggregate object-level evidence with the
+pre-specified ALL-SAFE rule
+\[
+    s^{\mathrm{frame}}_v(t)=\min_o s_v(o,t),
+\]
+and make one frame-level physical decision,
+\[
+    \mathrm{ADMIT}
+    \quad\Longleftrightarrow\quad
+    s^{\mathrm{frame}}_v(t)\geq\tau_v.
+\]
+Conditioning and prompt frames are always retained.
+
+The physical intervention occurs only after SAM 3 has completed and yielded
+the current-frame prediction.  On \textsc{Admit}, the native tracker state is
+left unchanged.  On \textsc{Block}, the just-produced frame is removed from
+the global \texttt{non\_cond\_frame\_outputs} dictionary and from the
+corresponding per-object non-conditioning output dictionaries before the
+next propagation step, while normal tracker bookkeeping is retained.
+Operationally, blocking is therefore post-yield whole-frame memory eviction:
+the decision-frame prediction is preserved, but subsequent propagation uses
+a memory state from which that frame is absent.
+
+We verified this intervention separately before evaluating learned gates.
+In the mechanism sanity check, every intended blocked frame was present in
+both global and per-object memory immediately before eviction and absent
+immediately afterward.  The first intervention-frame prediction was
+identical to the ungated run, while later masks diverged, demonstrating that
+the intervention changes subsequent closed-loop tracking without modifying
+the already-produced prediction.  The physical intervention is therefore
+frame-level, although its admission score is derived from object-level
+signals.
 
 \subsection{Signal-family ladder}
 
