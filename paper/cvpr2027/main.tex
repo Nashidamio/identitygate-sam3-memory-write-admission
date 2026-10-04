@@ -30,21 +30,24 @@ VOS/PVS tracker that physically accepts or blocks candidate memory writes
 without fine-tuning the segmentation model.
 We evaluate a nested family of manual, learned quality-temporal,
 self-identity, and competitor-relative identity policies using
-leakage-controlled cohorts, matched write rates, and video-clustered
-inference.
-On the frozen Hard TEST cohort, the learned quality-temporal gate improves
-POR@30 over a write-rate-matched manual policy by 2.96 percentage points,
-with a video-clustered BCa 95\% confidence interval of
-[0.61, 6.43] percentage points.
-In contrast, the tested native SAM 3 pointer identity signals do not
-establish an incremental recovery benefit under the controlled comparisons.
-Exact-budget neutral-selector controls further show that a lower write
-frequency alone is insufficient to justify causal credit for a gating
-policy.
-These results support learned quality and temporal evidence as the
-strongest demonstrated basis for memory admission in the tested setting,
-while showing that write-rate control is essential for evaluating
-memory-governance methods.
+leakage-controlled cohorts, frozen write-rate matching rules, exact-budget
+neutral controls, and video-clustered inference.
+On the frozen Hard TEST cohort, the preregistered self-identity versus
+quality-temporal primary contrast misses the frozen write-rate tolerance
+and therefore does not admit a matched-rate primary interpretation.
+Among the pre-specified matched secondary comparisons, the learned
+quality-temporal gate improves POR@30 over the manual policy by
+2.96 percentage points, with a video-clustered BCa 95\% confidence interval
+of [0.61, 6.43] percentage points.
+The matched competitor-relative versus self-identity comparison yields no
+POR@30 difference, providing no established incremental recovery benefit
+from the tested relational native-pointer signal.
+At the same exact per-video write budgets, the signal-informed policies also
+do not establish clear POR@30 superiority over outcome-independent neutral
+timing schedules.
+These results support learned quality-temporal evidence over the matched
+manual policy in the tested setting, while showing that write-rate and
+write-budget controls are essential for evaluating memory admission.
 \end{abstract}
 
 \section{Introduction}
@@ -74,12 +77,16 @@ memory budget rather than because it selected more informative states.
 We therefore treat realized write rate as an explicit comparison constraint
 and complement matched-rate comparisons with exact-budget neutral controls.
 
-Our strongest confirmatory result is that a learned quality-temporal policy
-(B2) improves post-occlusion recovery over a matched manual policy (B1).
-The tested native pointer-based identity extensions, however, do not
-establish additional recovery benefit.
-The result is deliberately narrower than claiming that gating universally
-improves SAM 3 or that identity information is generally unhelpful.
+The preregistered primary contrast compares the self-identity policy B3-S
+against the learned quality-temporal policy B2.  On HARD\_TEST80, their
+realized write rates differ by more than the frozen matching tolerance, so
+we do not claim a matched-rate primary effect.  Among the pre-specified
+matched secondary comparisons, B2 improves post-occlusion recovery over the
+manual quality-temporal policy B1.  The clean matched B3-R-versus-B3-S
+comparison, however, establishes no incremental recovery benefit from the
+tested competitor-relative native-pointer signal.  These findings are
+deliberately narrower than claiming that gating universally improves SAM 3
+or that identity information is generally unhelpful.
 
 Our contributions are:
 \begin{itemize}
@@ -87,14 +94,15 @@ Our contributions are:
     frozen SAM 3 VOS/PVS;
     \item a nested evaluation of quality-temporal, self-identity, and
     competitor-relative identity signal families;
-    \item a leakage-controlled evaluation protocol with matched write-rate
-    requirements and video-clustered bootstrap inference;
-    \item exact-budget neutral-selector controls that separate signal
-    selection from write-frequency effects; and
-    \item a bounded empirical finding that learned quality-temporal signals
-    provide the strongest demonstrated basis for memory admission in the
-    tested setting, while the tested native pointer identity signals provide
-    no established incremental recovery benefit.
+    \item a leakage-controlled evaluation protocol with frozen write-rate
+    matching requirements and video-clustered bootstrap inference;
+    \item exact-budget neutral-selector controls that hold physical write
+    counts equal per video when diagnosing signal-informed timing; and
+    \item a bounded empirical result: learned quality-temporal gating
+    improves recovery over the matched manual policy, while the tested
+    native-pointer identity additions establish no incremental recovery
+    benefit and the exact-budget neutral diagnostics establish no clear
+    superiority of signal-informed timing at the frozen operating points.
 \end{itemize}
 
 \section{Related Work}
