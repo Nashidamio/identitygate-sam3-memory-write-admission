@@ -5,6 +5,9 @@ from __future__ import annotations
 from pathlib import Path
 
 import matplotlib.pyplot as plt
+
+# Use embedded TrueType fonts in PDF output; avoid Type 3 fonts.
+plt.rcParams["pdf.fonttype"] = 42
 from matplotlib.patches import FancyArrowPatch, FancyBboxPatch
 
 

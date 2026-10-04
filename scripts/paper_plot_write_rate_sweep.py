@@ -8,6 +8,9 @@ from pathlib import Path
 
 import matplotlib.pyplot as plt
 
+# Use embedded TrueType fonts in PDF output; avoid Type 3 fonts.
+plt.rcParams["pdf.fonttype"] = 42
+
 
 ROOT = Path(__file__).resolve().parents[1]
 INPUT = ROOT / "experiments" / "EXP053_final_test" / "curve_summary.csv"
