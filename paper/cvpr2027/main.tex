@@ -1,15 +1,25 @@
 \documentclass[10pt,twocolumn,letterpaper]{article}
 
-% TEMPORARY CONTENT SCAFFOLD.
-% Replace this preamble with the official CVPR 2027 author kit only after
-% the venue template is verified and frozen.
-\usepackage{times}
-\usepackage{graphicx}
-\usepackage{amsmath}
-\usepackage{booktabs}
+% PROVISIONAL CVPR REVIEW FORMAT.
+% The active cvpr.sty is byte-identical to the pinned official
+% cvpr-org/author-kit snapshot recorded in CVPR_TEMPLATE_PROVENANCE.md.
+% That upstream snapshot identifies itself as CVPR 2026 and is used
+% provisionally until an official CVPR 2027 author kit is published.
+\usepackage[review]{cvpr}
+
+% Paper-specific packages not already supplied by cvpr.sty.
 \usepackage{multirow}
 \usepackage{microtype}
-\usepackage{xcolor}
+
+% Review-mode hyperlink setup recommended by the pinned author kit.
+\definecolor{cvprblue}{rgb}{0.21,0.49,0.74}
+\usepackage[pagebackref,breaklinks,colorlinks,allcolors=cvprblue]{hyperref}
+
+% Target venue metadata.  This does not change the provenance/version
+% of the pinned provisional style file.
+\def\paperID{*****}
+\def\confName{CVPR}
+\def\confYear{2027}
 
 \title{When Should SAM 3 Write to Memory?\\
 A Controlled Study of Signal-Informed Memory Admission for
@@ -730,7 +740,7 @@ identity signals provide no established incremental recovery benefit.
 The exact-budget controls further show why memory-write policies require
 budget-aware evaluation before gains can be attributed to their signals.
 
-\bibliographystyle{plain}
+\bibliographystyle{ieeenat_fullname}
 \bibliography{references}
 
 \end{document}
