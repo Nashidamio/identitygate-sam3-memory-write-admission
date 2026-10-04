@@ -308,3 +308,37 @@ OPEN_METADATA:
 - publication-vs-arXiv preference for entries with both forms.
 
 No field above may be filled from memory.
+
+
+## Metadata correction A1 - ReMeDI-SAM3 title
+
+Date: 2026-10-04
+
+Status: VERIFIED METADATA CORRECTION.
+
+New external evidence from the official arXiv record for identifier
+2512.16880 contradicts the earlier title preserved in the project reference
+resolution seed.
+
+SUPERSEDED title:
+Memory-Enhanced SAM3 for Occlusion-Robust Surgical Instrument Segmentation
+
+VERIFIED current arXiv title:
+ReMeDI: Refined Memory for Disambiguation of Identities with SAM3 in Surgical Segmentation
+
+VERIFIED authors:
+Valay Bundele; Mehran Hosseinzadeh; Hendrik P.A. Lensch.
+
+Identifier:
+arXiv:2512.16880.
+
+Current arXiv version inspected:
+v2, revised 2026-03-08.
+
+Scientific role is unchanged:
+ReMeDI-SAM3 remains a supporting identity / memory / occlusion-aware
+neighbour. This correction changes bibliographic metadata only and does not
+alter any thesis experimental conclusion or novelty claim.
+
+For references.bib and manuscript citations, use the VERIFIED current arXiv
+title above rather than the superseded project-seed title.
