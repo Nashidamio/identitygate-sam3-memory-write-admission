@@ -518,6 +518,25 @@ B5 is rate-compatible with B2 at the headline point and differs by
 \([-0.019608,\,0.012500]\).  This interval includes zero and does not
 establish an advantage for the DMS-lite write-side comparator over B2.
 
+\subsection{Supported write-rate sweep}
+
+The frozen TEST sweep contains 19 operating points that were supported by
+the pre-TEST DEV rate-matching procedure.  POR@30 is not a monotone function
+of realized write rate for B2, B3-S, B3-R, or B5.  For B2, the highest
+observed POR@30 among its supported points is 0.7569 at write rate 0.3233,
+after which POR@30 falls to 0.7451 at write rate 0.3999.  B3-S similarly
+reaches 0.7648 at 0.2906 before falling to 0.7510 at 0.3990, while B3-R
+reaches 0.7648 at 0.2923 before falling to 0.7352 at 0.4074.  B5 reaches
+0.7530 at 0.3080 and then falls to 0.7490 at 0.4281.
+
+B1 shows a different pattern over its three supported points: POR@30
+decreases from 0.7510 to 0.7411 to 0.7273 as realized write rate increases
+from 0.1122 to 0.2318 to 0.3199.  Thus, the supported sweep provides no
+general monotone rule that either more or fewer memory writes improve
+recovery.  The headline \(r_\star=0.30\) operating point was selected from
+DEV write-rate criteria before TEST; no reported conclusion is chosen from
+the most favorable TEST threshold.
+
 \subsection{Exact-budget neutral controls}
 
 \begin{table}[t]
@@ -609,16 +628,57 @@ improvement nor degradation for B2.
 The results support a narrow conclusion:
 within the tested frozen SAM 3 substrate and evaluation protocol,
 learned quality-temporal information provides the strongest demonstrated
-basis for memory admission.
+basis for memory admission.  The matched B2-versus-B1 result shows that a
+learned quality--temporal policy can improve recovery relative to the frozen
+manual quality--temporal rule at a comparable physical write rate.  However,
+the exact-budget neutral diagnostics do not establish that any tested
+signal-informed policy is superior to an outcome-independent timing schedule
+at the same per-video write budget.  The positive B2-versus-B1 result should
+therefore be interpreted as a comparison between two frozen admission
+policies, not as proof that signal-based timing is universally optimal.
+
+The supported write-rate sweep reinforces this caution.  B2, B3-S, B3-R,
+and B5 have non-monotonic POR@30 trajectories over their frozen supported
+TEST points, while B1 decreases across its three supported points as write
+rate increases.  Memory-write frequency alone therefore does not explain
+the observed recovery behavior, and selecting a favorable TEST threshold
+would give a misleading picture of policy quality.
+
+The identity result is also bounded by signal availability.  In the
+development-only EXP022 relational-signal census, valid generated identity
+pointers were present on approximately 55.7\% of candidate rows across
+26 videos, with substantial video-to-video heterogeneity.  The deployed
+frozen routing therefore falls back from B3-R to B3-S and then to B2 when
+the required identity information is unavailable.  Consequently, the
+matched B3-R-versus-B3-S null result concerns the tested native SAM 3
+pointer signals under this availability and fallback regime; it does not
+establish that identity information, external re-identification features,
+or other learned identity representations are generally unhelpful.
+
+Identity-theft events are additionally low-frequency in the HARD\_TEST80
+headline evaluation.  Depending on the policy, 16--30 of 506 qualifying
+reappearance events satisfy the frozen ITR@30 theft-event criterion.
+ITR@30 is therefore retained as a secondary endpoint with video-clustered
+uncertainty, and sparse or near-zero theft counts are not promoted into
+stronger identity conclusions.
+
+The study is restricted to one frozen SAM 3 VOS substrate and MOSEv2, with
+cohorts constructed from the MOSEv2 training partition because the released
+validation split cannot support the required frame-level endpoint
+construction.  The results therefore do not establish generalization to
+other VOS architectures, datasets, memory organizations, or identity
+representations.
+
+Finally, EXP055 is explicitly post-defense, supplementary, and
+nonconfirmatory.  Its full-video mIoU point estimates favor B0 over B2, but
+the corresponding pooled and video-balanced confidence intervals include
+zero.  This probe establishes neither a statistically reliable full-video
+improvement nor degradation for B2 and does not modify the frozen
+confirmatory conclusions.
 
 They do not support the broader claims that memory gating universally
 improves SAM 3, that identity information is generally unhelpful, or that
 the tested gate improves ordinary full-video segmentation quality.
-
-% TODO: discuss non-monotonic write-rate sweep.
-% TODO: discuss identity pointer availability and theft-event sparsity.
-% TODO: discuss one-substrate / one-dataset limitation.
-% TODO: discuss post-defense EXP055 cautiously.
 
 \section{Conclusion}
 \label{sec:conclusion}
