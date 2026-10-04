@@ -1,0 +1,279 @@
+\documentclass[10pt,twocolumn,letterpaper]{article}
+
+% TEMPORARY CONTENT SCAFFOLD.
+% Replace this preamble with the official CVPR 2027 author kit only after
+% the venue template is verified and frozen.
+\usepackage{times}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{microtype}
+\usepackage{xcolor}
+
+\title{When Should SAM 3 Write to Memory?\\
+A Controlled Study of Signal-Informed Memory Admission for
+Video Object Segmentation}
+
+\author{Anonymous CVPR 2027 Submission}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Video object segmentation systems rely on memory to preserve object state
+over time, yet not every prediction is equally suitable for future memory.
+We study a controlled question: what information should a memory-write gate
+use---quality signals, temporal signals, or identity signals?
+We introduce a lightweight memory-admission mechanism for a frozen SAM 3
+VOS/PVS tracker that physically accepts or blocks candidate memory writes
+without fine-tuning the segmentation model.
+We evaluate a nested family of manual, learned quality-temporal,
+self-identity, and competitor-relative identity policies using
+leakage-controlled cohorts, matched write rates, and video-clustered
+inference.
+On the frozen Hard TEST cohort, the learned quality-temporal gate improves
+POR@30 over a write-rate-matched manual policy by 2.96 percentage points,
+with a video-clustered BCa 95\% confidence interval of
+[0.61, 6.43] percentage points.
+In contrast, the tested native SAM 3 pointer identity signals do not
+establish an incremental recovery benefit under the controlled comparisons.
+Exact-budget neutral-selector controls further show that a lower write
+frequency alone is insufficient to justify causal credit for a gating
+policy.
+These results support learned quality and temporal evidence as the
+strongest demonstrated basis for memory admission in the tested setting,
+while showing that write-rate control is essential for evaluating
+memory-governance methods.
+\end{abstract}
+
+\section{Introduction}
+\label{sec:intro}
+
+Video object segmentation trackers increasingly rely on internal memory to
+propagate object state across time.
+A memory write is therefore not merely a bookkeeping operation: it changes
+the information available to future predictions.
+This creates a distinct control problem from frame-wise segmentation itself:
+\emph{when should the tracker commit its current state to memory?}
+
+Our study isolates that question in a frozen SAM 3 VOS/PVS substrate.
+Rather than modifying the segmentation architecture or fine-tuning the
+foundation model, we intervene only on candidate memory admission.
+This design permits a controlled comparison of signal families while
+preserving the underlying tracker.
+
+The central research question is:
+\emph{What information should a memory-write gate use---quality signals,
+temporal signals, or identity signals?}
+
+A key methodological difficulty is that different gates can write at
+different rates.
+A policy that writes less often can appear better or worse because of its
+memory budget rather than because it selected more informative states.
+We therefore treat realized write rate as an explicit comparison constraint
+and complement matched-rate comparisons with exact-budget neutral controls.
+
+Our strongest confirmatory result is that a learned quality-temporal policy
+(B2) improves post-occlusion recovery over a matched manual policy (B1).
+The tested native pointer-based identity extensions, however, do not
+establish additional recovery benefit.
+The result is deliberately narrower than claiming that gating universally
+improves SAM 3 or that identity information is generally unhelpful.
+
+Our contributions are:
+\begin{itemize}
+    \item a physically verified closed-loop memory-write intervention for
+    frozen SAM 3 VOS/PVS;
+    \item a nested evaluation of quality-temporal, self-identity, and
+    competitor-relative identity signal families;
+    \item a leakage-controlled evaluation protocol with matched write-rate
+    requirements and video-clustered bootstrap inference;
+    \item exact-budget neutral-selector controls that separate signal
+    selection from write-frequency effects; and
+    \item a bounded empirical finding that learned quality-temporal signals
+    provide the strongest demonstrated basis for memory admission in the
+    tested setting, while the tested native pointer identity signals provide
+    no established incremental recovery benefit.
+\end{itemize}
+
+\section{Related Work}
+\label{sec:related}
+
+% TODO: Populate only from verified literature.
+% Required groups:
+% 1. memory-based video object segmentation;
+% 2. SAM-family video memory and propagation;
+% 3. memory selection / quality-aware memory updates;
+% 4. identity / re-identification signals in VOS;
+% 5. evaluation under controlled budgets where relevant.
+%
+% Do not introduce a "first" claim without explicit verified evidence.
+
+\section{Controlled Memory-Write Admission}
+\label{sec:method}
+
+\subsection{Frozen SAM 3 substrate}
+
+% TODO: describe build_sam3_video_model(), frozen weights, VOS/PVS memory
+% path, and the intervention point using only repository-verified details.
+
+\subsection{Closed-loop admission intervention}
+
+% TODO: define candidate write, admit/block action, and verify that blocking
+% changes future memory state while prediction continues.
+
+\subsection{Signal-family ladder}
+
+% TODO:
+% B0: native write behavior.
+% B1: manual quality/temporal gate.
+% B2: learned quality/temporal gate.
+% B3-S: B2 + self-identity information.
+% B3-R: B3-S + competitor-relative identity information.
+% B5: frozen comparison policy.
+%
+% Keep B3-R status and routing details consistent with canonical records.
+
+\subsection{Gate constraints}
+
+% TODO: <=50K trainable parameters, frozen SAM, FP32 identity cosine,
+% no LoRA / no detector / no SAM fine-tuning.
+
+\section{Evaluation Protocol}
+\label{sec:protocol}
+
+\subsection{Data and leakage boundaries}
+
+% TODO: development-exposure boundary, Fresh DEV, Hard TEST,
+% Representative TEST, outcome-independent selection, one-touch TEST.
+
+\subsection{Endpoints}
+
+% TODO: define POR@30 and ITR@30 exactly from the frozen endpoint record.
+
+\subsection{Write-rate matching}
+
+% TODO: explain frozen tolerance and why unmatched comparisons are
+% descriptive rather than controlled causal contrasts.
+
+\subsection{Statistical inference}
+
+% TODO: video as statistical cluster; paired video-clustered BCa bootstrap;
+% confidence level; effect-size reporting.
+
+\subsection{Exact-budget neutral selectors}
+
+% TODO: explain budget-preserving neutral timing control without overstating
+% what the neutral comparison proves.
+
+\section{Results}
+\label{sec:results}
+
+\subsection{Main Hard TEST result}
+
+\begin{table}[t]
+\centering
+\caption{Hard TEST operating-point results. Values must be copied from the
+frozen canonical result artifact before submission.}
+\label{tab:hard-main}
+\begin{tabular}{lccc}
+\toprule
+Policy & POR@30 & ITR@30 & Write rate \\
+\midrule
+B0   & 0.7411 & 0.0593 & 1.0000 \\
+B1   & 0.7273 & 0.0514 & 0.3199 \\
+B2   & 0.7569 & 0.0316 & 0.3233 \\
+B3-S & 0.7648 & 0.0395 & 0.2906 \\
+B3-R & 0.7648 & 0.0336 & 0.2923 \\
+B5   & 0.7530 & 0.0336 & 0.3080 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The primary matched comparison is B2 versus B1.
+B2 improves POR@30 by 0.02964, with a video-clustered BCa 95\%
+confidence interval of [0.00612, 0.06430].
+Their realized write-rate difference is 0.00335, within the frozen matching
+tolerance of 0.02.
+
+\subsection{What do identity signals add?}
+
+The properly write-rate-compatible B3-R versus B3-S comparison yields a
+POR@30 difference of 0.00000, with a video-clustered BCa 95\% confidence
+interval of [-0.01129, 0.01431].
+Thus, the tested competitor-relative native pointer signal does not
+establish an incremental recovery benefit.
+
+The B3-S versus B2 comparison is not treated as a clean causal identity
+contrast because its realized write-rate difference exceeds the frozen
+matching tolerance.
+
+\subsection{Why write-rate control matters}
+
+% TODO: insert matched-rate table / effect-size figure.
+% TODO: explain why B0 is descriptive only at the operating point.
+
+\subsection{Exact-budget neutral controls}
+
+% TODO: insert exact-budget signal-vs-neutral table.
+% Required interpretation:
+% Hard TEST signal-minus-neutral confidence intervals do not establish clear
+% superiority of the signal-informed policies at the frozen operating point.
+
+\subsection{Representative TEST}
+
+% TODO: report the disjoint Representative TEST as external-validity evidence
+% with its smaller event count stated clearly.
+
+\section{Supplementary Post-Defense Full-Video Probe}
+\label{sec:exp055}
+
+EXP055 evaluates ordinary full-video segmentation quality on an
+outcome-independently sampled 80-video supplementary cohort.
+It is post-defense, nonconfirmatory evidence and does not modify the frozen
+confirmatory TEST conclusions.
+
+For pooled object-frame mean IoU, B0 obtains 0.73694 and B2 obtains 0.67810,
+for a B2-minus-B0 difference of -0.05884.
+The video-clustered BCa 95\% confidence interval is
+[-0.11845, 0.00167].
+The point estimate therefore favors B0, but the interval includes zero;
+EXP055 establishes neither a statistically reliable full-video mIoU
+improvement nor degradation for B2.
+
+% TODO: likely move most EXP055 detail to supplement if main-page pressure
+% requires it, retaining an explicit limitation/reference in the main paper.
+
+\section{Discussion}
+\label{sec:discussion}
+
+The results support a narrow conclusion:
+within the tested frozen SAM 3 substrate and evaluation protocol,
+learned quality-temporal information provides the strongest demonstrated
+basis for memory admission.
+
+They do not support the broader claims that memory gating universally
+improves SAM 3, that identity information is generally unhelpful, or that
+the tested gate improves ordinary full-video segmentation quality.
+
+% TODO: discuss non-monotonic write-rate sweep.
+% TODO: discuss identity pointer availability and theft-event sparsity.
+% TODO: discuss one-substrate / one-dataset limitation.
+% TODO: discuss post-defense EXP055 cautiously.
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+Memory admission should be evaluated as a controlled decision problem rather
+than as an incidental reduction in write frequency.
+Under matched write rates, our learned quality-temporal gate improves
+post-occlusion recovery over a manual policy, while the tested native SAM 3
+identity signals provide no established incremental recovery benefit.
+The exact-budget controls further show why memory-write policies require
+budget-aware evaluation before gains can be attributed to their signals.
+
+\bibliographystyle{plain}
+% \bibliography{references}
+
+\end{document}
