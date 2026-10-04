@@ -252,9 +252,12 @@ B1 is a non-learned reliability baseline.  For each object it uses
 \texttt{mask\_conf\_iou\_head}, \texttt{occ\_score\_logit},
 \texttt{area\_ratio\_anchor}, and \texttt{temporal\_iou\_prev}.  We define
 \[
+\begin{aligned}
 q_{\mathrm{conf}}
-  = \operatorname{clip}(\texttt{mask\_conf\_iou\_head},0,1)
-    \,\sigma(\texttt{occ\_score\_logit}),
+  ={}& \operatorname{clip}(
+       \texttt{mask\_conf\_iou\_head},0,1) \\
+     & {}\times \sigma(\texttt{occ\_score\_logit}),
+\end{aligned}
 \]
 \[
 q_{\mathrm{area}} =
@@ -262,7 +265,8 @@ q_{\mathrm{area}} =
 0, & r=0,\\
 \min(r,1/r), & r>0,
 \end{cases}
-\qquad
+\]
+\[
 q_{\mathrm{temp}}
   = \operatorname{clip}(\texttt{temporal\_iou\_prev},0,1),
 \]
@@ -590,6 +594,7 @@ the most favorable TEST threshold.
 
 \begin{table}[t]
 \centering
+\setlength{\tabcolsep}{5pt}
 \caption{HARD\_TEST80 exact-budget neutral diagnostics.  Each neutral
 schedule copies the corresponding signal policy's physical write count
 exactly in every video.  Deltas are signal minus neutral POR@30.}
