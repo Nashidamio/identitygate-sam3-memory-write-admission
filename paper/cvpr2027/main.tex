@@ -520,15 +520,69 @@ establish an advantage for the DMS-lite write-side comparator over B2.
 
 \subsection{Exact-budget neutral controls}
 
-% TODO: insert exact-budget signal-vs-neutral table.
-% Required interpretation:
-% Hard TEST signal-minus-neutral confidence intervals do not establish clear
-% superiority of the signal-informed policies at the frozen operating point.
+\begin{table}[t]
+\centering
+\caption{HARD\_TEST80 exact-budget neutral diagnostics.  Each neutral
+schedule copies the corresponding signal policy's physical write count
+exactly in every video.  Deltas are signal minus neutral POR@30.}
+\label{tab:neutral-main}
+\begin{tabular}{lccc}
+\toprule
+Policy & Signal & Neutral & $\Delta$ POR@30 [95\% BCa CI] \\
+\midrule
+B1   & 0.7273 & 0.7451 & $-0.0178$ [$-0.0467$, 0.0060] \\
+B2   & 0.7569 & 0.7628 & $-0.0059$ [$-0.0283$, 0.0132] \\
+B3-S & 0.7648 & 0.7648 & $\phantom{-}0.0000$ [$-0.0215$, 0.0221] \\
+B3-R & 0.7648 & 0.7628 & $\phantom{-}0.0020$ [$-0.0211$, 0.0287] \\
+B5   & 0.7530 & 0.7490 & $\phantom{-}0.0040$ [$-0.0174$, 0.0260] \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+At the frozen HARD\_TEST80 operating points, none of the five
+signal-minus-neutral POR@30 intervals excludes zero.  Thus, these diagnostics
+do not establish clear superiority of the signal-informed timing over an
+outcome-independent schedule with the same exact per-video physical write
+budget.  This does not imply that admission timing is irrelevant; rather, it
+shows that write frequency and timing are important confounds and that a
+policy should not receive causal credit merely because it writes less often.
 
 \subsection{Representative TEST}
 
-% TODO: report the disjoint Representative TEST as external-validity evidence
-% with its smaller event count stated clearly.
+\begin{table}[t]
+\centering
+\caption{REPRESENTATIVE\_TEST40 headline operating-point results over
+40 development-untouched videos and 76 qualifying reappearance events.
+This cohort is an external-validity anchor rather than the confirmatory
+Hard-TEST inference cohort.}
+\label{tab:representative-main}
+\begin{tabular}{lccc}
+\toprule
+Policy & POR@30 & ITR@30 & Write rate \\
+\midrule
+B0   & 0.5789 & 0.0000 & 1.0000 \\
+B1   & 0.6711 & 0.0132 & 0.3375 \\
+B2   & 0.7237 & 0.0132 & 0.3739 \\
+B3-S & 0.7237 & 0.0132 & 0.3581 \\
+B3-R & 0.7237 & 0.0000 & 0.3652 \\
+B5   & 0.6974 & 0.0132 & 0.3977 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+On REPRESENTATIVE\_TEST40, B2, B3-S, and B3-R all obtain POR@30 of
+0.7237.  The B3-S-minus-B2 write-rate difference is 0.01574, within the
+frozen 0.02 tolerance, and the POR@30 difference is exactly zero.  This is
+consistent with the absence of an observed self-identity recovery gain in
+this smaller external-validity cohort.
+
+Other pairwise rate conditions differ from HARD\_TEST80.  In particular,
+B2 minus B1 has a Representative-TEST write-rate difference of 0.03640 and
+is therefore \textsc{Rate-Mismatch}; we do not present the corresponding
+outcome difference as a matched replication of the HARD\_TEST80 secondary
+effect.  Given only 76 qualifying events and the cohort's pre-specified
+external-validity role, these results are reported descriptively rather than
+used to replace the HARD\_TEST80 confirmatory inference.
 
 \section{Supplementary Post-Defense Full-Video Probe}
 \label{sec:exp055}
