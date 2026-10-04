@@ -2378,3 +2378,54 @@ NEXT:
 - Inspect the frozen final tracker interfaces needed to compute full-video
   GT-visible, non-conditioning object-frame IoU for B0 and frozen B2.
 - Freeze inference script/config before running SAM.
+
+
+## EXP055 RESULT - post-defense full-video IoU - 2026-10-04
+
+STATUS:
+- EXECUTED / COMPLETED.
+- Scientific status:
+  SUPPLEMENTARY_POSTDEFENSE_NONCONFIRMATORY.
+- Source code/config commit:
+  049bcf7da6098ddb3207926afe808ea3d16c74a0.
+
+OBSERVED:
+- Videos: 80.
+- Paired tracker runs: 160.
+- Evaluable GT-visible non-conditioning object-frames: 9,778.
+- B0 pooled mean IoU: 0.7369431584723181.
+- B2 pooled mean IoU: 0.6781042863785702.
+- Primary pooled B2 minus B0 delta: -0.05883887209374783.
+- Video-clustered BCa 95% CI:
+  [-0.11845205735413418, 0.0016732381322542309].
+- B0 video-balanced mean IoU: 0.704008157300997.
+- B2 video-balanced mean IoU: 0.666728236623254.
+- Secondary video-balanced delta: -0.037279920677743085.
+- Secondary BCa 95% CI:
+  [-0.099019818157226, 0.020909119806880407].
+- B2 frozen tau: 0.1.
+- B2 pooled write rate: 0.46634963299906956.
+- Bootstrap replicates: 50,000.
+- Peak VRAM: 11.699738025665283 GB.
+- Total tracker runtime: 2149.6459395885468 s.
+
+INTERPRETED:
+- The full-video mIoU point estimates favor B0.
+- The primary and secondary 95% confidence intervals both include zero.
+- Therefore no statistically established full-video mIoU improvement or
+  degradation is claimed from EXP055.
+
+BOUNDARY:
+- No retraining occurred.
+- No threshold search occurred.
+- No threshold retuning occurred.
+- EXP055 is supplementary post-defense evidence only.
+- EXP053/EXP054 confirmatory conclusions remain unchanged.
+
+INTEGRITY:
+- miou_bootstrap_draws.csv SHA256:
+  67d293b48840b0d1ffe5df590f8cda61f557c0009bfdfd03815a29083d79e3db
+- miou_summary.json SHA256:
+  a077ec1132b7a03c08e5fb444f678b78bdfc6fba777e4d5a1abedbd48c172862
+- per_video_miou.csv SHA256:
+  121c9c3588d6f8b6dff4dc31e91c4d723ab5c34572f37b27be6002c50de63b5a

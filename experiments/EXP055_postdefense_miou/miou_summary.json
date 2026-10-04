@@ -1,0 +1,74 @@
+{
+  "B0": {
+    "pooled_mean_iou": 0.7369431584723181,
+    "pooled_write_rate": 1.0,
+    "video_balanced_mean_iou": 0.704008157300997
+  },
+  "B2": {
+    "pooled_mean_iou": 0.6781042863785702,
+    "pooled_write_rate": 0.46634963299906956,
+    "tau": 0.1,
+    "video_balanced_mean_iou": 0.666728236623254
+  },
+  "claim_boundary": {
+    "confirmatory_test_result": false,
+    "exp053_exp054_conclusions_modified": false,
+    "postdefense_supplementary": true,
+    "retraining_performed": false,
+    "threshold_retuning_performed": false,
+    "threshold_search_performed": false
+  },
+  "config_sha256": "dedd5b0c47db6284f46b544f71945e362c9ed84f55532e3f5419eab6457de652",
+  "evaluable_object_frames": 9778,
+  "experiment": "EXP055",
+  "output_hashes": {
+    "miou_bootstrap_draws.csv": "67d293b48840b0d1ffe5df590f8cda61f557c0009bfdfd03815a29083d79e3db",
+    "per_video_miou.csv": "121c9c3588d6f8b6dff4dc31e91c4d723ab5c34572f37b27be6002c50de63b5a"
+  },
+  "paired_runs": 160,
+  "primary": {
+    "bca": {
+      "acceleration": -0.004046651422223024,
+      "adjusted_alpha_lower": 0.023113149223326534,
+      "adjusted_alpha_upper": 0.9730184006634929,
+      "bias_correction_z0": -0.008773311508328191,
+      "bootstrap_equal_to_observed": 0,
+      "bootstrap_less_than_observed": 24825,
+      "ci_lower": -0.11845205735413418,
+      "ci_upper": 0.0016732381322542309
+    },
+    "bootstrap_replicates": 50000,
+    "cluster_unit": "video",
+    "confidence": 0.95,
+    "contrast": "B2_minus_B0",
+    "delta": -0.05883887209374783,
+    "estimator": "pooled_object_frame_mean_iou",
+    "seed": 52
+  },
+  "repo_commit": "049bcf7da6098ddb3207926afe808ea3d16c74a0",
+  "runtime": {
+    "cache_hits": 0,
+    "cache_misses": 160,
+    "max_peak_vram_gb": 11.699738025665283,
+    "total_tracker_runtime_sec": 2149.6459395885468
+  },
+  "scientific_status": "SUPPLEMENTARY_POSTDEFENSE_NONCONFIRMATORY",
+  "script_sha256": "991ace106face8121b91d8f2a8870b78bd5e0fd0ca76d06ad3e0e0b462f8629f",
+  "secondary": {
+    "bca": {
+      "acceleration": -0.005378779137963984,
+      "adjusted_alpha_lower": 0.022299731836480565,
+      "adjusted_alpha_upper": 0.9720956377005507,
+      "bias_correction_z0": -0.01363648042763889,
+      "bootstrap_equal_to_observed": 0,
+      "bootstrap_less_than_observed": 24728,
+      "ci_lower": -0.099019818157226,
+      "ci_upper": 0.020909119806880407
+    },
+    "contrast": "B2_minus_B0",
+    "delta": -0.037279920677743085,
+    "estimator": "video_balanced_mean_iou"
+  },
+  "status": "SUPPLEMENTARY_POSTDEFENSE_MIOU_COMPLETE",
+  "videos": 80
+}

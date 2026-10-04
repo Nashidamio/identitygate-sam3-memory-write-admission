@@ -1634,3 +1634,60 @@ Next:
 Next:
 - Freeze the B0/B2 full-video IoU inference implementation before any SAM
   propagation on POSTDEFENSE_MIOU80.
+
+
+## EXP055 completion note - 2026-10-04
+
+- Status: COMPLETED / SUPPLEMENTARY_POSTDEFENSE_NONCONFIRMATORY.
+- Code version:
+  049bcf7da6098ddb3207926afe808ea3d16c74a0
+- Dataset:
+  POSTDEFENSE_MIOU80; 80 outcome-independently sampled videos from the
+  frozen untouched eligible population.
+- Frozen B2 threshold:
+  tau = 0.1.
+- Retraining performed: false.
+- Threshold search performed: false.
+- Threshold retuning performed: false.
+- Paired tracker runs: 160.
+- Evaluable GT-visible non-conditioning object-frames: 9,778.
+- Primary estimator:
+  pooled object-frame mean IoU with video-clustered BCa 95% CI,
+  50,000 bootstrap replicates.
+- B0 pooled mean IoU:
+  0.7369431584723181.
+- B2 pooled mean IoU:
+  0.6781042863785702.
+- Primary B2 minus B0 delta:
+  -0.05883887209374783.
+- Primary BCa 95% CI:
+  [-0.11845205735413418, 0.0016732381322542309].
+- Secondary video-balanced mean IoU:
+  B0 = 0.704008157300997;
+  B2 = 0.666728236623254.
+- Secondary B2 minus B0 delta:
+  -0.037279920677743085.
+- Secondary BCa 95% CI:
+  [-0.099019818157226, 0.020909119806880407].
+- B0 pooled write rate:
+  1.0.
+- B2 pooled write rate:
+  0.46634963299906956.
+- Peak VRAM:
+  11.699738025665283 GB.
+- Total tracker runtime:
+  2149.6459395885468 s.
+- Output hashes:
+  - miou_bootstrap_draws.csv:
+    67d293b48840b0d1ffe5df590f8cda61f557c0009bfdfd03815a29083d79e3db
+  - miou_summary.json:
+    a077ec1132b7a03c08e5fb444f678b78bdfc6fba777e4d5a1abedbd48c172862
+  - per_video_miou.csv:
+    121c9c3588d6f8b6dff4dc31e91c4d723ab5c34572f37b27be6002c50de63b5a
+- Interpretation:
+  The supplementary point estimate favors B0 for ordinary full-video mIoU,
+  but both the primary pooled and secondary video-balanced 95% confidence
+  intervals include zero. EXP055 therefore does not establish a statistically
+  reliable full-video mIoU improvement or degradation for B2.
+  This post-defense supplementary result does not modify the frozen
+  EXP053/EXP054 confirmatory conclusions.
