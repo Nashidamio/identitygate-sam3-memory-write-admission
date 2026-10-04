@@ -452,8 +452,9 @@ null, harmful, positive, and inconclusive outcomes are all retained.
 
 \begin{table}[t]
 \centering
-\caption{Hard TEST operating-point results. Values must be copied from the
-frozen canonical result artifact before submission.}
+\caption{HARD\_TEST80 headline operating-point results over 80 videos and
+506 qualifying reappearance events. ITR@30 is secondary. B0 remains at its
+native write rate.}
 \label{tab:hard-main}
 \begin{tabular}{lccc}
 \toprule
@@ -469,28 +470,53 @@ B5   & 0.7530 & 0.0336 & 0.3080 \\
 \end{tabular}
 \end{table}
 
-The primary matched comparison is B2 versus B1.
-B2 improves POR@30 by 0.02964, with a video-clustered BCa 95\%
-confidence interval of [0.00612, 0.06430].
-Their realized write-rate difference is 0.00335, within the frozen matching
-tolerance of 0.02.
+The pre-registered primary contrast is B3-S minus B2.  Its observed POR@30
+difference is \(+0.007905\) (\(+0.791\) percentage points), with paired
+video-clustered BCa 95\% interval
+\([-0.002037,\,0.020882]\).  However, the realized write rates are 0.2906
+for B3-S and 0.3233 for B2, an absolute difference of 0.03270.  This exceeds
+the frozen 0.02 tolerance, so the primary contrast is
+\textsc{Rate-Mismatch}; we therefore do not claim a matched-rate primary
+effect from this comparison.
+
+Among the pre-specified matched secondary contrasts, B2 exceeds B1 by
+\(0.029644\) POR@30 (\(2.964\) percentage points), with BCa 95\% interval
+\([0.006122,\,0.064302]\).  Their write-rate difference is 0.003346, within
+the frozen tolerance.  This provides positive secondary evidence that the
+learned quality--temporal gate improves post-occlusion recovery relative to
+the matched manual quality--temporal rule.
 
 \subsection{What do identity signals add?}
 
-The properly write-rate-compatible B3-R versus B3-S comparison yields a
-POR@30 difference of 0.00000, with a video-clustered BCa 95\% confidence
-interval of [-0.01129, 0.01431].
-Thus, the tested competitor-relative native pointer signal does not
-establish an incremental recovery benefit.
+The clean matched identity-family comparison is B3-R minus B3-S.  Their
+write-rate difference is 0.001756 and their POR@30 difference is exactly
+0.000000, with BCa 95\% interval
+\([-0.011287,\,0.014307]\).  Thus, the tested competitor-relative native
+pointer signal does not establish an incremental recovery benefit beyond
+the self-identity variant.
 
-The B3-S versus B2 comparison is not treated as a clean causal identity
-contrast because its realized write-rate difference exceeds the frozen
-matching tolerance.
+B3-S minus B2 cannot serve as a clean matched identity comparison on
+HARD\_TEST80 because of the primary rate mismatch described above.  Likewise,
+B3-R minus B2 has a write-rate difference of 0.03095 and is also
+\textsc{Rate-Mismatch}.  The evidence therefore does not support a general
+claim that identity information is ineffective; it supports only the
+narrower conclusion that the tested native-pointer identity additions do not
+establish incremental recovery benefit under the comparisons that remain
+rate-compatible.
 
 \subsection{Why write-rate control matters}
 
-% TODO: insert matched-rate table / effect-size figure.
-% TODO: explain why B0 is descriptive only at the operating point.
+B0 achieves POR@30 of 0.7411 while writing at every eligible opportunity.
+The gated variants write at substantially lower rates, approximately
+0.29--0.32 at the headline operating point.  Consequently, raw B0-versus-gate
+differences combine selector behavior with a large write-budget difference
+and are reported only as practical-reference comparisons, not as controlled
+same-budget effects.
+
+B5 is rate-compatible with B2 at the headline point and differs by
+\(-0.003953\) POR@30, with BCa 95\% interval
+\([-0.019608,\,0.012500]\).  This interval includes zero and does not
+establish an advantage for the DMS-lite write-side comparator over B2.
 
 \subsection{Exact-budget neutral controls}
 
