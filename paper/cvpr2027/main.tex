@@ -202,15 +202,88 @@ signals.
 
 \subsection{Signal-family ladder}
 
-% TODO:
-% B0: native write behavior.
-% B1: manual quality/temporal gate.
-% B2: learned quality/temporal gate.
-% B3-S: B2 + self-identity information.
-% B3-R: B3-S + competitor-relative identity information.
-% B5: frozen comparison policy.
-%
-% Keep B3-R status and routing details consistent with canonical records.
+We evaluate a nested ladder designed to vary the information available to
+memory admission while keeping the SAM 3 substrate and physical intervention
+fixed.
+
+\paragraph{B0: native write behavior.}
+B0 is the ungated SAM 3 reference.  It retains every eligible
+non-conditioning memory write under the native tracker behavior and therefore
+operates at its native physical write rate.
+
+\paragraph{B1: manual quality--temporal rule.}
+B1 is a non-learned reliability baseline.  For each object it uses
+\texttt{mask\_conf\_iou\_head}, \texttt{occ\_score\_logit},
+\texttt{area\_ratio\_anchor}, and \texttt{temporal\_iou\_prev}.  We define
+\[
+q_{\mathrm{conf}}
+  = \operatorname{clip}(\texttt{mask\_conf\_iou\_head},0,1)
+    \,\sigma(\texttt{occ\_score\_logit}),
+\]
+\[
+q_{\mathrm{area}} =
+\begin{cases}
+0, & r=0,\\
+\min(r,1/r), & r>0,
+\end{cases}
+\qquad
+q_{\mathrm{temp}}
+  = \operatorname{clip}(\texttt{temporal\_iou\_prev},0,1),
+\]
+where \(r=\texttt{area\_ratio\_anchor}\).
+The object score is
+\[
+s_{\mathrm{B1}}
+  = \min(q_{\mathrm{conf}},q_{\mathrm{area}},q_{\mathrm{temp}}).
+\]
+A non-finite required B1 input fails closed.  B1 has no learned parameters.
+
+\paragraph{B2: learned quality--temporal gate.}
+B2 uses five causal quality/temporal inputs:
+\texttt{mask\_conf\_iou\_head}, \texttt{occ\_score\_logit},
+\texttt{area\_norm}, \texttt{area\_ratio\_anchor}, and
+\texttt{temporal\_iou\_prev}.  The gate was trained on TRAIN-only data using
+two failure-typed MLP heads with shared TRAIN-only feature normalization.
+Each head has hidden dimensions 64 and 32, and the two heads together contain
+4,994 learned parameters.  The SAM 3 parameters remain frozen.
+
+\paragraph{B3-S: self-identity augmentation.}
+B3-S augments the B2 feature set with
+\texttt{ptr\_sim\_anchor\_fp32}, the FP32 cosine similarity between the
+current valid object pointer and that object's permanent frame-0 pointer
+anchor.  Identity cosine computation disables autocast and TF32 and uses the
+highest float32 matrix-multiplication precision.
+
+\paragraph{B3-R: competitor-relative identity augmentation.}
+B3-R further adds \texttt{max\_comp\_anchor\_cos\_fp32}, the maximum FP32
+cosine similarity between the current valid pointer and the frame-0 anchors
+of other tracked objects.  Identity availability is handled by a frozen
+nested route: B3-R falls back to B3-S when competitor-relative identity is
+unavailable, and B3-S falls back to B2 when self identity is unavailable.
+The SAM-derived \texttt{pointer\_valid} flag is used only as an availability
+mask and is never supplied as a predictive numeric feature.  Objects are
+never removed from the ALL-SAFE frame aggregation because identity is
+missing.
+
+\paragraph{B5: DMS-lite write-side comparator.}
+B5 is a non-learned comparator inspired by the reliability signal used by
+SAM3-DMS~\cite{SAM3-DMS}; it is not an exact reproduction of that system.
+For object \(i\), let
+\(u_i=\texttt{occ\_score\_logit}_i\) and
+\(m_i=\texttt{mask\_conf\_iou\_head}_i\).  We define
+\[
+p_i =
+\begin{cases}
+0, & u_i\leq 0,\\
+2\sigma(u_i)-1, & u_i>0,
+\end{cases}
+\qquad
+s_{\mathrm{B5},i}=p_i m_i.
+\]
+Non-finite required inputs fail closed.  B5 introduces no learned parameters
+or additional runtime model; it applies this upstream-derived reliability
+signal prospectively to the same frame-level write-side intervention used by
+the other gated variants.
 
 \subsection{Gate constraints}
 
