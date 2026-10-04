@@ -287,8 +287,20 @@ the other gated variants.
 
 \subsection{Gate constraints}
 
-% TODO: <=50K trainable parameters, frozen SAM, FP32 identity cosine,
-% no LoRA / no detector / no SAM fine-tuning.
+The learned admission component is deliberately small and is constrained to
+at most 50K trainable parameters.  The B2 instantiation used here contains
+4,994 learned parameters across its two failure-typed heads.  No gradient is
+propagated into SAM 3, and we use no LoRA adaptation, SAM fine-tuning,
+detector modification, Perceiver compression, or replacement SAM
+architecture.  Thus all trainable capacity is confined to the admission
+gate rather than the segmentation substrate.
+
+Identity similarity is evaluated under a fixed numerical protocol.  All
+pointer cosine similarities are computed in FP32 with autocast disabled and
+CUDA TF32 disabled, and with
+\texttt{torch.set\_float32\_matmul\_precision("highest")}.  These settings
+are held fixed across self-identity and competitor-relative identity
+variants; numerical precision is therefore not another experimental factor.
 
 \section{Evaluation Protocol}
 \label{sec:protocol}
