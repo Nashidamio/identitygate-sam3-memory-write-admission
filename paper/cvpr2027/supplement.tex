@@ -1,0 +1,270 @@
+\documentclass[10pt,twocolumn,letterpaper]{article}
+
+% PROVISIONAL CVPR REVIEW FORMAT.
+% The active cvpr.sty is byte-identical to the pinned official
+% cvpr-org/author-kit snapshot recorded in CVPR_TEMPLATE_PROVENANCE.md.
+% That upstream snapshot identifies itself as CVPR 2026 and is used
+% provisionally until an official CVPR 2027 author kit is published.
+\usepackage[review]{cvpr}
+
+\usepackage{multirow}
+\usepackage{microtype}
+
+\definecolor{cvprblue}{rgb}{0.21,0.49,0.74}
+\usepackage[pagebackref,breaklinks,colorlinks,allcolors=cvprblue]{hyperref}
+
+\def\paperID{*****}
+\def\confName{CVPR}
+\def\confYear{2027}
+
+\title{When Should SAM 3 Write to Memory?\\
+A Controlled Study of Signal-Informed Memory Admission for
+Video Object Segmentation}
+
+\author{Anonymous CVPR 2027 Submission}
+
+\renewcommand{\thesection}{S\arabic{section}}
+\renewcommand{\thesubsection}{S\arabic{section}.\arabic{subsection}}
+\renewcommand{\thetable}{S\arabic{table}}
+
+\begin{document}
+\maketitlesupplementary
+
+This supplement expands the frozen implementation, evaluation, and
+reproducibility details used by the main paper.  It does not introduce new
+confirmatory analyses or modify the one-touch TEST conclusions.
+
+\section{Frozen substrate and evaluation boundary}
+\label{sec:supp-substrate}
+
+The final substrate is frozen SAM 3 VOS/PVS constructed with
+\texttt{build\_sam3\_video\_model()} at SAM source commit
+\texttt{8f0b7f4d4e7eda2ed606ebde6702c93359ad01da}.
+No SAM gradient, LoRA, fine-tuning, detector modification, or new SAM
+architecture is used.  The gate parameter budget is at most 50K learned
+parameters.
+
+All final experiments use an NVIDIA RTX 4080 SUPER with 16 GB VRAM under
+WSL2 Ubuntu 22.04.5, Python 3.12.13, PyTorch 2.10.0+cu128, and CUDA 12.8.
+The realized Python environment is recorded by
+\texttt{requirements.lock.txt}, whose frozen SHA256 is
+\texttt{c943caf335003594dc93d9042267695e70c0e955652257caae8a3ff11a0efa6a}.
+
+MOSEv2 train contains 3,666 videos in the available release used here.
+The released validation split is not used for the endpoint construction
+because it does not provide the required dense per-frame annotation.
+Video is the statistical cluster.  HARD\_TEST80 contains 80 videos and
+506 qualifying primary events; REPRESENTATIVE\_TEST40 contains 40 videos
+and 76 qualifying primary events.
+
+TEST prediction-derived evidence is touched exactly once after the final
+freeze.  No TEST threshold search or threshold retuning is permitted, and
+unsupported development write-rate targets are not interpolated post hoc on
+TEST.
+
+\section{Gate architecture and routing}
+\label{sec:supp-gates}
+
+B0 is the native ungated write reference.  B1 is a fixed manual
+quality--temporal rule.  B2 is the learned quality--temporal condition.
+B3-S adds native self-identity information, B3-R adds competitor-relative
+identity information, and B5 is the DMS-lite write-side comparator used in
+the main study.
+
+\begin{table*}[t]
+\centering
+\small
+\caption{Frozen signal ladder and headline operating thresholds.  Parameter
+counts refer only to learned gate parameters; SAM 3 remains frozen.}
+\label{tab:supp-gates}
+\begin{tabular}{llrr}
+\toprule
+Policy & Information available to admission & Learned params & $\tau$ \\
+\midrule
+B0   & Native ungated reference & 0 & -- \\
+B1   & Manual quality + temporal & 0 & 0.10 \\
+B2   & Five quality/temporal features & 4,994 & 0.10 \\
+B3-S & B2 + native self-pointer similarity & 5,122 & 0.20 \\
+B3-R & B3-S + competitor-relative pointer similarity & 5,250 & 0.20 \\
+B5   & Confidence/presence reliability comparator & 0 & 0.70 \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+B2 uses two independent failure-typed MLP heads, one for drift and one for
+theft.  Each head has the architecture
+$5\!\rightarrow\!64\!\rightarrow\!32\!\rightarrow\!1$ with ReLU hidden
+activations, for 2,497 parameters per head and 4,994 learned parameters in
+total.  Training is deterministic full-batch PyTorch CPU float64 with
+independently weighted binary cross-entropy losses, AdamW learning rate
+0.001, weight decay 0.0001, betas $(0.9,0.999)$, epsilon $10^{-8}$, and
+1,000 epochs without early stopping or DEV tuning.  The TRAIN-only
+normalizer is a z-score transform fitted on finite B2 training rows.
+
+B3-S changes the input dimension to six by adding
+\texttt{ptr\_sim\_anchor\_fp32}; each failure head is
+$6\!\rightarrow\!64\!\rightarrow\!32\!\rightarrow\!1$, for 5,122 learned
+parameters in total.  B3-R adds
+\texttt{max\_comp\_anchor\_cos\_fp32}; each failure head is
+$7\!\rightarrow\!64\!\rightarrow\!32\!\rightarrow\!1$, for 5,250 learned
+parameters in total.
+
+Identity cosine calculations use FP32 with autocast disabled, CUDA TF32
+disabled, and \texttt{torch.set\_float32\_matmul\_precision("highest")}.
+The availability mask is
+\texttt{pointer\_valid = object\_score\_logit > 0}; it is used only for
+routing and is not supplied as a predictive numeric feature.  B3-S falls
+back to B2 when self identity is unavailable.  B3-R routes to B3-R when
+relational identity is available, to B3-S when only self identity is
+available, and to B2 when self identity is unavailable.
+
+For B2, B3-S, and B3-R, any non-finite required B2 base feature fails closed
+with object admission score zero.  Independent drift and theft unsafe
+probabilities are converted to safe probabilities and combined
+conservatively by their minimum.  Object scores are then aggregated by the
+minimum across tracked objects before the thresholded frame-level
+\textsc{Admit}/\textsc{Block} decision.
+
+\section{Final HARD\_TEST80 operating-point results}
+\label{sec:supp-hard}
+
+\begin{table*}[t]
+\centering
+\small
+\caption{Frozen HARD\_TEST80 headline results.  Peak VRAM and runtime are
+reported for the executed condition and are descriptive engineering
+measurements rather than statistical endpoints.}
+\label{tab:supp-hard}
+\begin{tabular}{lrrrrr}
+\toprule
+Policy & POR@30 & ITR@30 & Write rate & Peak VRAM (GB) & Runtime (s) \\
+\midrule
+B0   & 0.7411 & 0.0593 & 1.0000 & 15.81 & 2572.7 \\
+B1   & 0.7273 & 0.0514 & 0.3199 & 13.11 & 1852.5 \\
+B2   & 0.7569 & 0.0316 & 0.3233 & 13.06 & 1878.9 \\
+B3-S & 0.7648 & 0.0395 & 0.2906 & 13.06 & 1878.1 \\
+B3-R & 0.7648 & 0.0336 & 0.2923 & 13.06 & 1888.7 \\
+B5   & 0.7530 & 0.0336 & 0.3080 & 13.03 & 1845.7 \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+The preregistered primary contrast is B3-S minus B2 on HARD\_TEST80.  The
+observed POR@30 difference is $0.007905$, with video-clustered BCa 95\%
+confidence interval $[-0.002037,\,0.020882]$.  The realized write rates are
+0.290565 for B3-S and 0.323269 for B2, an absolute difference of 0.032703.
+Because this exceeds the frozen 0.02 tolerance, the primary contrast is
+classified as \textsc{Rate-Mismatch} and does not receive a matched-rate
+primary interpretation.
+
+The sole primary endpoint is POR@30.  ITR@30 is secondary.  Paired
+video-clustered BCa 95\% intervals use 50,000 bootstrap replicates, seed 52,
+midrank bias correction, and delete-one-video jackknife acceleration.
+
+\section{Representative TEST cohort}
+\label{sec:supp-representative}
+
+\begin{table}[t]
+\centering
+\small
+\caption{REPRESENTATIVE\_TEST40 descriptive results.}
+\label{tab:supp-representative}
+\begin{tabular}{lrrr}
+\toprule
+Policy & POR@30 & ITR@30 & Write rate \\
+\midrule
+B0   & 0.5789 & 0.0000 & 1.0000 \\
+B1   & 0.6711 & 0.0132 & 0.3375 \\
+B2   & 0.7237 & 0.0132 & 0.3739 \\
+B3-S & 0.7237 & 0.0132 & 0.3581 \\
+B3-R & 0.7237 & 0.0000 & 0.3652 \\
+B5   & 0.6974 & 0.0132 & 0.3977 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+These 40 videos and 76 qualifying events provide the pre-specified
+external-validity cohort.  They are reported descriptively and do not replace
+the HARD\_TEST80 confirmatory inference.
+
+\section{Exact-budget neutral controls and supported-rate discipline}
+\label{sec:supp-rate-controls}
+
+For every signal-based condition, the neutral counterpart receives exactly
+the same number of admitted writes in each video.  The admitted frame
+identities are selected independently of the signal gate while the count is
+held fixed.  Signal and neutral admit counts are asserted to match before the
+paired diagnostic is accepted.  These controls therefore separate the write
+budget from the signal-based timing choice.
+
+Write-rate operating points are selected from frozen DEV support before
+TEST.  Unsupported development targets are not interpolated or repaired
+after TEST, and the evaluator records
+\texttt{threshold\_search\_performed = False} and
+\texttt{threshold\_retuning\_performed = False}.
+
+\section{Post-defense full-video segmentation probe}
+\label{sec:supp-exp055}
+
+EXP055 is supplementary, post-defense, and nonconfirmatory.  It evaluates
+ordinary full-video segmentation quality for frozen B0 versus frozen B2 on
+80 outcome-independently sampled untouched videos.  No retraining, threshold
+search, or threshold retuning is performed.
+
+\begin{table*}[t]
+\centering
+\small
+\caption{EXP055 full-video mIoU results.  Confidence intervals are
+video-clustered BCa 95\% intervals for B2 minus B0.}
+\label{tab:supp-exp055}
+\begin{tabular}{lrrrr}
+\toprule
+Estimator & B0 & B2 & B2$-$B0 & 95\% CI \\
+\midrule
+Pooled object-frame mean IoU
+  & 0.736943 & 0.678104 & $-0.058839$ & $[-0.118452,\,0.001673]$ \\
+Video-balanced mean IoU
+  & 0.704008 & 0.666728 & $-0.037280$ & $[-0.099020,\,0.020909]$ \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+The analysis contains 9,778 evaluable GT-visible non-conditioning
+object-frames and uses 50,000 bootstrap replicates.  B2 uses its frozen
+threshold $\tau=0.1$ and realizes pooled write rate 0.466350.  Peak VRAM is
+11.6997 GB and total tracker runtime is 2149.646 s.  Both confidence
+intervals include zero, so this supplementary probe establishes neither a
+statistically reliable full-video mIoU improvement nor degradation for B2
+and does not modify the frozen confirmatory TEST conclusions.
+
+\section{Reproducibility artifacts}
+\label{sec:supp-repro}
+
+The public-release environment record is
+\texttt{docs/ENVIRONMENT.md}; \texttt{environment.yml} records the Conda
+environment specification; \texttt{requirements.lock.txt} records the
+realized Python package environment; and \texttt{docs/SAM3\_INSTALL.md}
+records the SAM source pin and installation-specific dependency fixes.
+
+The frozen confirmatory protocol is recorded in
+\texttt{PREREGISTRATION.md}.  Experiment commands and provenance are tracked
+in \texttt{EXPERIMENT\_REGISTRY.md}, while the chronological current-state
+record is \texttt{RESEARCH\_STATE.md}.  The EXP053 final TEST directory
+contains \texttt{artifact\_manifest.json}, which hashes the final config,
+script, and major output files.
+
+The frozen learned-model artifacts are:
+\begin{itemize}
+\item B2:
+  \texttt{experiments/EXP029\_b2core\_train/model.json}, SHA256
+  \texttt{6160a6be9da2058808c16182abe03443014806273df46fe59a86411ffc869ecf};
+\item B3-S/B3-R:
+  \texttt{experiments/EXP031\_b3\_train/model.json}, SHA256
+  \texttt{235076b86aa0975b3ec624aae703575fd4f030381b6af4008c3808f2db71847a}.
+\end{itemize}
+
+Historical planning artifacts remain available for provenance, but later
+frozen amendments and executed experiment records supersede them where the
+repository explicitly records a methodological correction.
+
+\end{document}
